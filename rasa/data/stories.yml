@@ -1,0 +1,417 @@
+# UPDATED stories.yml
+version: "3.1"
+
+stories:
+
+- story: greet and help
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_help
+  - action: action_help
+
+- story: academic setup check
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+
+- story: full academic setup workflow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: create_academic_year
+  - action: action_create_academic_year
+  - intent: create_academic_term
+  - action: action_create_academic_term
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+
+- story: create class after setup
+  steps:
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+  - intent: create_class
+  - action: action_create_class
+  - intent: affirm
+  - action: utter_affirm
+
+- story: create student with form enrollment
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: create_student
+  - action: student_creation_form
+  - active_loop: student_creation_form
+  - active_loop: null
+  - action: action_create_student
+  - intent: affirm
+  - action: utter_affirm
+
+- story: student creation needs academic setup
+  steps:
+  - intent: create_student
+  - action: student_creation_form
+  - active_loop: student_creation_form
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: action_create_student
+  - intent: create_academic_year
+  - action: action_create_academic_year
+  - intent: create_academic_term
+  - action: action_create_academic_term
+
+- story: create class then student
+  steps:
+  - intent: create_class
+  - action: action_create_class
+  - intent: create_student
+  - action: student_creation_form
+  - active_loop: student_creation_form
+  - active_loop: null
+  - action: action_create_student
+
+- story: check unassigned students
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: show_unassigned_students
+  - action: action_list_unassigned_students
+
+- story: class management workflow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: create_class
+  - action: action_create_class
+  - intent: list_classes
+  - action: action_list_classes
+  - intent: list_empty_classes
+  - action: action_list_empty_classes
+  - intent: goodbye
+  - action: utter_goodbye
+
+- story: student search and details
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: search_student
+  - action: action_search_student
+  - intent: get_student_details
+  - action: action_search_student
+
+- story: class analysis workflow
+  steps:
+  - intent: list_classes
+  - action: action_list_classes
+  - intent: list_students_by_class
+  - action: action_list_students_by_class
+  - intent: list_empty_classes
+  - action: action_list_empty_classes
+
+- story: help and explore
+  steps:
+  - intent: ask_help
+  - action: action_help
+  - intent: list_students
+  - action: action_list_students
+
+- story: bot challenge and help
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+  - intent: ask_help
+  - action: action_help
+
+- story: listing and viewing
+  steps:
+  - intent: list_students
+  - action: action_list_students
+  - intent: show_unassigned_students
+  - action: action_list_unassigned_students
+
+- story: deny after action
+  steps:
+  - intent: list_classes
+  - action: action_list_classes
+  - intent: deny
+  - action: utter_deny
+
+- story: complete analysis workflow
+  steps:
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+  - intent: list_classes
+  - action: action_list_classes
+  - intent: list_students
+  - action: action_list_students
+  - intent: show_unassigned_students
+  - action: action_list_unassigned_students
+  - intent: list_empty_classes
+  - action: action_list_empty_classes
+
+- story: academic year activation workflow
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+  - intent: activate_academic_year
+  - action: action_activate_academic_year
+  - intent: create_academic_term
+  - action: action_create_academic_term
+
+- story: student promotion workflow
+  steps:
+  - intent: list_students
+  - action: action_list_students
+  - intent: promote_students
+  - action: action_promote_students
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+
+- story: term transition workflow
+  steps:
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+  - intent: create_academic_term
+  - action: action_create_academic_term
+  - intent: promote_students
+  - action: action_promote_students
+  - intent: list_students
+  - action: action_list_students
+
+- story: academic year management flow
+  steps:
+  - intent: get_current_academic_year
+  - action: action_get_current_academic_year
+  - intent: activate_academic_year
+  - action: action_activate_academic_year
+  - intent: create_academic_term
+  - action: action_create_academic_term
+  - intent: promote_students
+  - action: action_promote_students
+
+- story: publish fee structure and set as default
+  steps:
+  - intent: publish_fee_structure
+    entities:
+      - structure_name: "Term 3 2025"
+  - action: action_publish_fee_structure
+  - slot_was_set:
+    - pending_default_structure_id: "some-uuid"
+  - intent: affirm_set_default
+  - action: action_set_default_fee_structure
+
+- story: publish fee structure but skip default
+  steps:
+  - intent: publish_fee_structure
+    entities:
+      - structure_name: "Term 3 2025"
+  - action: action_publish_fee_structure
+  - slot_was_set:
+    - pending_default_structure_id: "some-uuid"
+  - intent: deny_set_default
+  - action: utter_acknowledged
+
+- story: set existing structure as default
+  steps:
+  - intent: set_structure_as_default
+    entities:
+      - structure_name: "Term 3 2025"
+  - action: action_set_structure_as_default
+
+- story: generate invoices with no default set
+  steps:
+  - intent: generate_invoices
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_generate_invoices
+  - intent: set_structure_as_default
+    entities:
+      - structure_name: "Term 3 2025"
+  - action: action_set_structure_as_default
+  - intent: generate_invoices
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_generate_invoices
+
+- story: fee structure creation and publishing
+  steps:
+  - intent: create_fee_structure
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_create_fee_structure
+  - intent: add_fee_item
+    entities:
+      - fee_type: "tuition"
+      - amount: "25000"
+  - action: action_add_fee_item
+  - intent: publish_fee_structure
+    entities:
+      - term: "3"
+      - academic_year: "2025"
+  - action: action_publish_fee_structure
+  - intent: affirm_set_default
+  - action: action_set_default_fee_structure
+
+- story: view and delete fee items
+  steps:
+  - intent: view_fee_structure_details
+    entities:
+      - structure_name: "Term 3 2025"
+  - action: action_view_fee_structure_details
+  - intent: delete_specific_fee_item
+    entities:
+      - fee_type: "transport"
+      - structure_name: "Term 3 2025"
+  - action: action_delete_specific_fee_item
+
+- story: complete fee management workflow
+  steps:
+  - intent: list_fee_structures
+  - action: action_list_fee_structures
+  - intent: view_fee_structure_details
+    entities:
+      - structure_name: "Term 3 2025"
+  - action: action_view_fee_structure_details
+  - intent: add_fee_item
+    entities:
+      - fee_type: "lunch"
+      - amount: "3000"
+  - action: action_add_fee_item
+  - intent: publish_fee_structure
+    entities:
+      - structure_name: "Term 3 2025"
+  - action: action_publish_fee_structure
+
+- story: delete class workflow
+  steps:
+  - intent: list_classes
+  - action: action_list_classes
+  - intent: delete_class
+    entities:
+      - class_name: "8A"
+  - action: action_delete_class
+  - intent: list_classes
+  - action: action_list_classes
+
+- story: term activation and student promotion
+  steps:
+  - intent: activate_term
+    entities:
+      - term: "2"
+  - action: action_activate_term
+  - intent: promote_students
+    entities:
+      - target_term: "2"
+  - action: action_promote_students
+
+- story: reenroll student workflow
+  steps:
+  - intent: show_unassigned_students
+  - action: action_list_unassigned_students
+  - intent: reenroll_student
+    entities:
+      - student_name: "Eric Mwirichia"
+      - class_name: "8A"
+  - action: action_reenroll_student
+
+- story: invoice generation workflow
+  steps:
+  - intent: list_fee_structures
+  - action: action_list_fee_structures
+  - intent: generate_invoices
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_generate_invoices
+  - intent: get_invoice
+  - action: action_get_invoice
+
+- story: list academic terms workflow
+  steps:
+  - intent: check_academic_setup
+  - action: action_check_academic_setup
+  - intent: list_academic_terms
+  - action: action_list_academic_terms
+  - intent: activate_term
+    entities:
+      - term: "3"
+  - action: action_activate_term
+
+
+- story: complete invoice workflow
+  steps:
+  - intent: generate_invoices
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_generate_invoices
+  - intent: issue_invoices
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_issue_invoices
+
+- story: review before issuing
+  steps:
+  - intent: generate_invoices
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_generate_invoices
+  - intent: get_invoice
+    entities:
+      - student_name: "Eric"
+  - action: action_get_invoice
+  - intent: issue_invoices
+    entities:
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_issue_invoices
+
+- story: class-specific invoice issuing
+  steps:
+  - intent: issue_invoices
+    entities:
+      - class_name: "Grade 4"
+      - academic_year: "2025"
+      - term: "3"
+  - action: action_issue_invoices
+
+- story: create term for new academic year
+  steps:
+  - intent: create_academic_term
+    entities:
+      - term: "3"
+      - academic_year: "2025"
+  - action: action_create_academic_term
+  - intent: activate_academic_year
+    entities:
+      - academic_year: "2025"
+  - action: action_activate_academic_year
+  - intent: create_academic_term
+    entities:
+      - term: "3"
+      - academic_year: "2025"
+  - action: action_create_academic_term
+
+- story: record payment and send notification
+  steps:
+    - intent: record_payment
+    - action: action_record_payment
+    - intent: affirm_send_payment_notification
+    - action: action_send_payment_notification
+
+- story: record payment and skip notification
+  steps:
+    - intent: record_payment
+    - action: action_record_payment
+    - intent: deny_send_payment_notification
+    - action: action_listen

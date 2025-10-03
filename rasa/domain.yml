@@ -1,0 +1,424 @@
+version: "3.1"
+
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - bot_challenge
+  - ask_help
+  - create_student
+  - assign_student_to_class
+  - list_students
+  - list_students_by_class
+  - show_unassigned_students
+  - search_student
+  - create_class
+  - list_classes
+  - list_empty_classes
+  - get_student_details
+  - create_academic_year
+  - create_academic_term
+  - check_academic_setup
+  - get_current_academic_year
+  - get_current_term
+  - nlu_fallback
+  - provide_admission_number
+  - auto_generate_admission
+  - deactivate_academic_year
+  - activate_academic_year
+  - promote_students
+  - activate_term
+  - list_academic_terms
+  - reenroll_student
+  - create_fee_structure
+  - list_fee_structures
+  - generate_invoices
+  - get_invoice
+  - add_fee_item
+  - view_fee_structure_details
+  - delete_fee_items
+  - delete_specific_fee_item
+  - publish_fee_structure
+  - affirm_set_default
+  - deny_set_default
+  - set_structure_as_default
+  - delete_class
+  - issue_invoices  
+  - list_invoices
+  - list_invoices_by_class
+  - list_unpaid_invoices
+  - cancel_invoice
+  - record_payment
+  - add_guardian
+  - get_guardians
+  - list_students_without_guardians
+  - notify_pending_invoices
+  - set_primary_guardian
+  - update_guardian
+  - send_guardian_message
+  - get_school_info
+  - complete_term
+  - affirm_send_payment_notification
+  - deny_send_payment_notification
+  - list_students_with_balances  # FIXED: removed incorrect triggers syntax
+  - notify_parents_with_balances
+  - broadcast_message_to_all_parents
+
+entities:
+  - admission_no
+  - student_name
+  - student_query
+  - class_name
+  - name
+  - level
+  - academic_year
+  - year
+  - stream
+  - term
+  - source_term
+  - target_term
+  - fee_type
+  - amount
+  - structure_name
+  - invoice_id
+  - payment_method
+  - txn_ref
+  - guardian_name
+  - relationship
+  - phone
+  - email
+  - message
+  - due_date
+
+slots:
+  admission_no:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: admission_no
+  
+  student_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: student_name
+  
+  student_query:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: student_query
+  
+  class_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: class_name
+  
+  name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: name
+  
+  level:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: level
+  
+  stream:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: stream
+  
+  academic_year:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: academic_year
+  
+  term:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: term
+
+  year:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: year
+
+  pending_student_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+  
+  pending_admission_no:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
+  pending_class_name:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
+  source_term:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: source_term
+  
+  target_term:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: target_term
+
+  invoice_id:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: invoice_id
+  
+  fee_type:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: fee_type
+
+  amount:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: amount
+
+  structure_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: structure_name
+
+  pending_default_structure_id:
+    type: text
+    mappings:
+      - type: custom
+
+  payment_method:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: payment_method
+
+  txn_ref:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: txn_ref
+
+  guardian_name:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: guardian_name
+  
+  relationship:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: relationship
+  
+  phone:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: phone
+  
+  email:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: email
+
+  message:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: message
+
+  pending_payment_notification:
+    type: text
+    mappings:
+      - type: custom
+  payment_student_id:
+    type: text
+    mappings:
+      - type: custom
+  payment_amount:
+    type: text
+    mappings:
+      - type: custom
+  payment_invoice_id:
+    type: text
+    mappings:
+      - type: custom
+
+  due_date:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: due_date
+
+
+responses:
+  utter_greet:
+    - text: "Hello! I'm your School Assistant. I can help you manage students, classes, and academic setup. What would you like to do today?"
+    - text: "Hi there! How can I help you with your school management tasks?"
+    - text: "Welcome! I'm here to assist with student and class management. What can I do for you?"
+
+  utter_goodbye:
+    - text: "Goodbye! Have a great day managing your school."
+    - text: "See you later! Feel free to come back anytime for assistance."
+    - text: "Take care! I'll be here when you need help with school tasks."
+
+  utter_affirm:
+    - text: "Great! Let me help you with that."
+    - text: "Perfect! I'll take care of that for you."
+    - text: "Excellent! Let's get that done."
+
+  utter_deny:
+    - text: "No problem! Is there anything else I can help you with?"
+    - text: "That's okay. What else would you like to do?"
+    - text: "Understood. How else can I assist you today?"
+
+  utter_iamabot:
+    - text: "I'm a School Assistant bot powered by Rasa. I help with managing students, classes, academic years, terms, and enrollment."
+    - text: "I'm an AI assistant designed to help you manage your school efficiently. I can handle student enrollment, class creation, academic setup, and more!"
+
+  utter_default:
+    - text: "I didn't understand that. Could you please rephrase? You can ask me to create students, manage classes, set up academic years, or type 'help' for more options."
+    - text: "Sorry, I'm not sure what you mean. Try asking about students, classes, academic setup, or say 'help' to see what I can do."
+    - text: "I'm not sure about that. I specialize in school management including students, classes, and academic administration. What would you like me to help with?"
+
+  utter_ask_student_name:
+    - text: "What is the student's name?"
+  
+  utter_ask_admission_no:
+    - text: "What is the admission number? (Or say 'auto generate' to create one automatically)"
+  
+  utter_ask_class_name:
+    - text: "Which class should the student be enrolled in? (e.g., 'Grade 4', '8A', 'Form 1')"
+
+  utter_acknowledged:
+    - text: "Okay, you can set it as default later if needed."
+    - text: "Got it. The structure is published but not set as default."
+    - text: "Understood. You can generate invoices by specifying the structure name."
+
+forms:
+  student_creation_form:
+    required_slots:
+      - student_name
+      - admission_no
+      - class_name
+
+actions:
+  - action_create_student
+  - action_assign_student_to_class
+  - action_list_students
+  - action_list_students_by_class
+  - action_list_unassigned_students
+  - action_search_student
+  - action_create_class
+  - action_list_classes
+  - action_list_empty_classes
+  - action_get_student_details
+  - action_create_academic_year
+  - action_create_academic_term
+  - action_check_academic_setup
+  - action_get_current_academic_year
+  - action_get_current_term
+  - action_help
+  - utter_greet
+  - utter_goodbye
+  - utter_affirm
+  - utter_deny
+  - utter_iamabot
+  - utter_default
+  - action_provide_admission_number
+  - action_auto_generate_admission
+  - action_deactivate_academic_year
+  - action_activate_academic_year
+  - action_promote_students
+  - action_activate_term
+  - action_list_academic_terms
+  - action_reenroll_student
+  - action_create_fee_structure
+  - action_list_fee_structures
+  - action_generate_invoices
+  - action_get_invoice
+  - action_add_fee_item
+  - action_view_fee_structure_details
+  - action_delete_fee_items
+  - action_delete_specific_fee_item
+  - action_publish_fee_structure
+  - action_delete_class
+  - action_set_default_fee_structure
+  - action_set_structure_as_default
+  - action_issue_invoices
+  - action_list_invoices
+  - action_list_invoices_by_class
+  - action_list_unpaid_invoices
+  - action_cancel_invoice
+  - action_record_payment
+  - action_add_guardian
+  - action_get_guardians
+  - action_list_students_without_guardians
+  - action_notify_pending_invoices
+  - action_set_primary_guardian
+  - action_update_guardian
+  - action_send_guardian_message
+  - action_get_school_info
+  - action_complete_term
+  - action_send_payment_notification
+  - action_reset_slots
+  - action_notify_parents_with_balances
+  - action_broadcast_message_to_all_parents
+  - action_list_students_with_balances
+
+
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: false
