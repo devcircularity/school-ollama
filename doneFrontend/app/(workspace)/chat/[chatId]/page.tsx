@@ -1,9 +1,9 @@
-// app/(workspace)/chat/[chatId]/page.tsx - Fixed to prevent unnecessary reloads
+// app/(workspace)/chat/[chatId]/page.tsx - Fixed to use correct message property
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { chatService, type ConversationDetail } from '@/services/chats'
+import { chatService, type ConversationDetail, transformMessagesToDisplay } from '@/services/chats'
 import { useAuthGuard } from '@/hooks/useAuthGuard'
 import { HeaderTitleBus } from '@/components/layout/HeaderBar'
 import ChatWrapper from '@/components/chat/ChatWrapper'
@@ -23,6 +23,12 @@ export default function ChatDetail() {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
     return uuidRegex.test(str)
   }
+
+  // Transform messages to display format
+  const displayMessages = useMemo(() => {
+    if (!conversation?.messages) return []
+    return transformMessagesToDisplay(conversation.messages)
+  }, [conversation?.messages])
 
   // Load conversation data from backend
   const loadConversation = useCallback(async () => {
@@ -187,7 +193,7 @@ export default function ChatDetail() {
         // Existing conversation
         <ChatWrapper
           conversationId={conversation.id}
-          initialMessages={conversation.displayMessages}
+          initialMessages={displayMessages}
           onConversationUpdated={handleConversationUpdated}
           className="h-full"
         />

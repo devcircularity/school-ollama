@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import remarkBreaks from 'remark-breaks';
 import ChatBlockRenderer from './tools/ChatBlockRenderer';
 import { Block, Action } from './tools/types';
 import { Image, FileText, Download, ExternalLink, ThumbsUp, ThumbsDown } from 'lucide-react';
