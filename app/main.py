@@ -1,4 +1,4 @@
-# app/main.py - Updated FastAPI entrypoint with all routers
+# app/main.py - Updated with proper CORS configuration
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -53,13 +53,15 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# CORS middleware
+# CORS middleware - MUST be added before routes
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],  # Added to expose all headers
+    max_age=3600,  # Cache preflight requests for 1 hour
 )
 
 # Global exception handler
