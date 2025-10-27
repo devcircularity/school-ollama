@@ -1,0 +1,21 @@
+version: "3.1"
+
+stories:
+
+- story: Student creation via Ollama brain
+  steps:
+  - intent: create_student
+  - action: action_ollama_brain_router
+  # Ollama handles the conversation
+  # It will trigger action_create_student when ready
+
+- story: Add guardian via Ollama brain
+  steps:
+  - intent: add_guardian
+  - action: action_ollama_brain_router
+  # Ollama handles the conversation
+
+- story: General conversation routing
+  steps:
+  - intent: greet
+  - action: action_ollama_brain_router
