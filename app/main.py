@@ -1,10 +1,11 @@
-# app/main.py - Fixed CORS configuration
-from fastapi import FastAPI, HTTPException
+# app/main.py - Fixed CORS configuration with detailed logging
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
 import logging
 import traceback
+import time
 
 from app.core.config import settings
 from app.core.db import get_engine
@@ -17,7 +18,10 @@ from app.api.routers import enrollments
 
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
@@ -56,11 +60,49 @@ app = FastAPI(
 # Log CORS origins for debugging
 logger.info(f"CORS Origins configured: {settings.CORS_ORIGINS}")
 
-# CORS middleware - MUST be added before routes
-# Using a more permissive configuration to ensure it works
+# Request logging middleware - BEFORE CORS
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Log all incoming requests with details"""
+    start_time = time.time()
+    
+    # Log request details
+    logger.info(f"⬇️  Incoming {request.method} {request.url.path}")
+    logger.info(f"   Origin: {request.headers.get('origin', 'No Origin header')}")
+    logger.info(f"   Host: {request.headers.get('host', 'No Host header')}")
+    logger.info(f"   User-Agent: {request.headers.get('user-agent', 'No User-Agent')[:50]}...")
+    logger.info(f"   Content-Type: {request.headers.get('content-type', 'No Content-Type')}")
+    
+    # Log all headers for OPTIONS requests
+    if request.method == "OPTIONS":
+        logger.info("   📋 All headers:")
+        for key, value in request.headers.items():
+            logger.info(f"      {key}: {value}")
+    
+    try:
+        response = await call_next(request)
+        process_time = time.time() - start_time
+        
+        # Log response details
+        logger.info(f"⬆️  Response {response.status_code} for {request.method} {request.url.path}")
+        logger.info(f"   Process time: {process_time:.3f}s")
+        
+        # Log response headers for OPTIONS
+        if request.method == "OPTIONS":
+            logger.info("   📋 Response headers:")
+            for key, value in response.headers.items():
+                logger.info(f"      {key}: {value}")
+        
+        return response
+    except Exception as e:
+        logger.error(f"❌ Error processing {request.method} {request.url.path}: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise
+
+# CORS middleware - MUST be added after logging middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,  # Your configured origins
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=[
@@ -75,21 +117,21 @@ app.add_middleware(
         "Keep-Alive",
         "X-Requested-With",
         "If-Modified-Since",
-        "X-School-ID",  # Your custom header
+        "X-School-ID",
     ],
     expose_headers=["*"],
     max_age=3600,
 )
 
-# The CORS middleware will automatically handle OPTIONS requests
-# No need for explicit OPTIONS handler
-
 # Global exception handler
 @app.exception_handler(Exception)
-async def global_exception_handler(request, exc):
+async def global_exception_handler(request: Request, exc: Exception):
     """Handle uncaught exceptions"""
+    logger.error(f"❌ Unhandled exception on {request.method} {request.url.path}")
+    logger.error(f"   Exception: {str(exc)}")
+    
     if settings.ENV == "dev":
-        logger.error(f"Unhandled exception: {traceback.format_exc()}")
+        logger.error(f"   Traceback:\n{traceback.format_exc()}")
         return JSONResponse(
             status_code=500,
             content={
@@ -98,7 +140,7 @@ async def global_exception_handler(request, exc):
             }
         )
     else:
-        logger.error(f"Unhandled exception: {exc}")
+        logger.error(traceback.format_exc())
         return JSONResponse(
             status_code=500,
             content={"detail": "Internal server error"}
@@ -110,10 +152,23 @@ async def health_check():
     return {
         "status": "healthy",
         "environment": settings.ENV,
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "cors_origins": settings.CORS_ORIGINS
+    }
+
+# Debug endpoint to test CORS
+@app.options("/api/test-cors")
+@app.get("/api/test-cors")
+async def test_cors(request: Request):
+    """Test endpoint to verify CORS is working"""
+    return {
+        "message": "CORS is working!",
+        "origin": request.headers.get("origin"),
+        "method": request.method
     }
 
 # Include routers
+logger.info("Registering API routers...")
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(schools.router, prefix="/api/schools", tags=["Schools"])  
 app.include_router(chat.router, prefix="/api/chat", tags=["Chat"])
@@ -126,6 +181,7 @@ app.include_router(payments.router, prefix="/api/payments", tags=["Payments"])
 app.include_router(guardians.router, prefix="/api/guardians", tags=["Guardians"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["Notifications"])
 app.include_router(enrollments.router, prefix="/api/enrollments", tags=["Enrollments"])
+logger.info("All routers registered successfully")
 
 # Root endpoint
 @app.get("/")
@@ -133,5 +189,6 @@ async def root():
     return {
         "message": "School Assistant API",
         "version": "1.0.0",
-        "docs_url": "/docs" if settings.ENV == "dev" else "Documentation disabled in production"
+        "docs_url": "/docs" if settings.ENV == "dev" else "Documentation disabled in production",
+        "cors_origins": settings.CORS_ORIGINS
     }
