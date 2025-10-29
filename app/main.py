@@ -81,19 +81,8 @@ app.add_middleware(
     max_age=3600,
 )
 
-# Add explicit OPTIONS handler for all routes (fallback)
-@app.options("/{full_path:path}")
-async def options_handler(full_path: str):
-    """Handle OPTIONS requests explicitly"""
-    return JSONResponse(
-        content={"message": "OK"},
-        headers={
-            "Access-Control-Allow-Origin": "*",  # Will be overridden by middleware for actual origin
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization, X-School-ID",
-            "Access-Control-Max-Age": "3600",
-        }
-    )
+# The CORS middleware will automatically handle OPTIONS requests
+# No need for explicit OPTIONS handler
 
 # Global exception handler
 @app.exception_handler(Exception)
