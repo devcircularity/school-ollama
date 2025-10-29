@@ -1,6 +1,0 @@
-[
-  {
-    "name": "relationship",
-    "pattern": "(\\bMother\\b|\\bFather\\b|\\bGuardian\\b|\\bUncle\\b|\\bAunt\\b|\\bGrandmother\\b|\\bGrandfather\\b|\\bSister\\b|\\bBrother\\b|\\bRelative\\b)"
-  }
-]
