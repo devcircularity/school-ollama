@@ -8,8 +8,9 @@ type CreateSchoolRequest = {
   address?: string
   currency?: string
   academic_year_start?: string
+  boarding_type?: 'DAY' | 'BOARDING' | 'BOTH'
+  gender_type?: 'BOYS' | 'GIRLS' | 'MIXED'
 }
-
 type UpdateSchoolRequest = {
   name?: string
   short_code?: string
@@ -18,10 +19,12 @@ type UpdateSchoolRequest = {
   address?: string
   currency?: string
   academic_year_start?: string
+  boarding_type?: 'DAY' | 'BOARDING' | 'BOTH'
+  gender_type?: 'BOYS' | 'GIRLS' | 'MIXED'
 }
 
 export type School = {
-  id: string // Updated to string to match UUID
+  id: string
   name: string
   short_code?: string
   email?: string
@@ -29,6 +32,8 @@ export type School = {
   address?: string
   currency?: string
   academic_year_start?: string
+  boarding_type?: 'DAY' | 'BOARDING' | 'BOTH'
+  gender_type?: 'BOYS' | 'GIRLS' | 'MIXED'
   owner_user_id: string
 }
 
@@ -107,7 +112,7 @@ export const schoolService = {
   
   async get(id: string) {
     const { data } = await api.get(`/api/schools/${id}`)
-    return data as SchoolLite
+    return data as School  // Changed from SchoolLite to School
   },
 
   async getOverview(schoolId: string) {
